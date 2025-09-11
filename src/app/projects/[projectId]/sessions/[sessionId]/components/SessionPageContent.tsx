@@ -13,6 +13,7 @@ import Link from "next/link";
 import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useTaskNotifications } from "@/hooks/useTaskNotifications";
 import { Badge } from "../../../../../../components/ui/badge";
 import { honoClient } from "../../../../../../lib/api/client";
@@ -58,11 +59,13 @@ export const SessionPageContent: FC<{
     useState(0);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isDiffModalOpen, setIsDiffModalOpen] = useState(false);
+  const [autoScroll, setAutoScroll] = useState(true);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // 自動スクロール処理
   useEffect(() => {
     if (
+      autoScroll &&
       (isRunningTask || isPausedTask) &&
       conversations.length !== previousConversationLength
     ) {
@@ -75,7 +78,7 @@ export const SessionPageContent: FC<{
         });
       }
     }
-  }, [conversations, isRunningTask, isPausedTask, previousConversationLength]);
+  }, [conversations, isRunningTask, isPausedTask, previousConversationLength, autoScroll]);
 
   return (
     <div className="flex h-screen max-h-screen overflow-hidden">
@@ -138,16 +141,27 @@ export const SessionPageContent: FC<{
                     Conversation is in progress...
                   </p>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    abortTask.mutate(sessionId);
-                  }}
-                >
-                  <XIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Abort</span>
-                </Button>
+                <div className="flex items-center gap-2">
+                  <label htmlFor="auto-scroll" className="flex items-center gap-1 cursor-pointer">
+                    <Checkbox
+                      id="auto-scroll"
+                      checked={autoScroll}
+                      onCheckedChange={(checked) => setAutoScroll(checked === true)}
+                      className="w-4 h-4 border-gray-400"
+                    />
+                    <span className="text-xs sm:text-sm">Auto-scroll</span>
+                  </label>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      abortTask.mutate(sessionId);
+                    }}
+                  >
+                    <XIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Abort</span>
+                  </Button>
+                </div>
               </div>
             )}
 
@@ -159,16 +173,27 @@ export const SessionPageContent: FC<{
                     Conversation is paused...
                   </p>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    abortTask.mutate(sessionId);
-                  }}
-                >
-                  <XIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Abort</span>
-                </Button>
+                <div className="flex items-center gap-2">
+                  <label htmlFor="auto-scroll-paused" className="flex items-center gap-1 cursor-pointer">
+                    <Checkbox
+                      id="auto-scroll-paused"
+                      checked={autoScroll}
+                      onCheckedChange={(checked) => setAutoScroll(checked === true)}
+                      className="w-4 h-4 border-gray-400"
+                    />
+                    <span className="text-xs sm:text-sm">Auto-scroll</span>
+                  </label>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      abortTask.mutate(sessionId);
+                    }}
+                  >
+                    <XIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Abort</span>
+                  </Button>
+                </div>
               </div>
             )}
           </div>
