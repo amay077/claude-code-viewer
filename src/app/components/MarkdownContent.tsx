@@ -5,6 +5,7 @@ import Markdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from "remark-gfm";
+import { MermaidRenderer } from "./MermaidRenderer";
 
 interface MarkdownContentProps {
   content: string;
@@ -125,6 +126,24 @@ export const MarkdownContent: FC<MarkdownContentProps> = ({
                 >
                   {children}
                 </code>
+              );
+            }
+
+            // Check if this is a mermaid code block
+            if (match[1] === "mermaid") {
+              return (
+                <div className="relative my-6">
+                  <div className="flex items-center justify-between bg-muted/30 px-4 py-2 border-b border-border rounded-t-lg">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      {match[1]}
+                    </span>
+                  </div>
+                  <div className="border-x border-b border-border rounded-b-lg bg-background">
+                    <MermaidRenderer
+                      content={String(children).replace(/\n$/, "")}
+                    />
+                  </div>
+                </div>
               );
             }
 
